@@ -150,6 +150,37 @@
       background: var(--primary-light);
     }
 
+    /* Presets Segment Control */
+    .preset-container {
+      display: flex;
+      gap: 8px;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+    .preset-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 8px 10px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .preset-btn.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
     /* Stepper & Counter UI */
     .counter-wrapper {
       display: flex;
@@ -349,6 +380,17 @@
     <div class="card-title-row">
       <h2 class="card-title">📝 今日登記</h2>
     </div>
+
+    <!-- 起始選項切換 (8 遍 vs 0 遍) -->
+    <div class="preset-container">
+      <button type="button" class="preset-btn active" id="btnPreset8" onclick="setTodayPreset(8)">
+        ⚡ 起始 8 遍
+      </button>
+      <button type="button" class="preset-btn" id="btnPreset0" onclick="setTodayPreset(0)">
+        🌱 起始 0 遍
+      </button>
+    </div>
+
     <div class="counter-wrapper">
       <div class="date-info">
         <span class="date-text" id="todayDate">----/--/--</span>
@@ -356,7 +398,7 @@
       </div>
       <div class="stepper">
         <button class="step-btn" onclick="stepChange('todayCount', -1)">−</button>
-        <input type="number" id="todayCount" class="num-input" min="0" value="8">
+        <input type="number" id="todayCount" class="num-input" min="0" value="8" oninput="checkPresetState()">
         <button class="step-btn" onclick="stepChange('todayCount', 1)">+</button>
       </div>
     </div>
@@ -380,7 +422,7 @@
 <div id="toast"></div>
 
 <script>
-  // 已直接整合您的 Google Apps Script 部署網址
+  // Google Apps Script 部署網址
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbz43B9DPbrAaL4Wu6tCRhm22pXs03DavkpOT9cs7_0VDhY35as587q7eAvZ8CaMhTdc/exec";
 
   const DAY_NAMES = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
@@ -410,12 +452,38 @@
     document.getElementById("btnBatch").disabled = disabled;
   }
 
+  // 起始選項切換（8 遍 或 0 遍）
+  function setTodayPreset(val) {
+    document.getElementById("todayCount").value = val;
+    checkPresetState();
+  }
+
+  function checkPresetState() {
+    const val = parseInt(document.getElementById("todayCount").value, 10);
+    const btn8 = document.getElementById("btnPreset8");
+    const btn0 = document.getElementById("btnPreset0");
+
+    if (val === 8) {
+      btn8.classList.add("active");
+      btn0.classList.remove("active");
+    } else if (val === 0) {
+      btn0.classList.add("active");
+      btn8.classList.remove("active");
+    } else {
+      btn8.classList.remove("active");
+      btn0.classList.remove("active");
+    }
+  }
+
   function stepChange(targetId, delta) {
     const input = document.getElementById(targetId);
     if (!input) return;
     let val = parseInt(input.value, 10) || 0;
     val = Math.max(0, val + delta);
     input.value = val;
+    if (targetId === 'todayCount') {
+      checkPresetState();
+    }
   }
 
   // 抓取試算表統計
@@ -457,7 +525,9 @@
     const todayBadge = document.getElementById("todayBadge");
     todayBadge.textContent = DAY_NAMES[dayIdx];
     todayBadge.className = `badge ${isWk ? 'badge-weekend' : 'badge-weekday'}`;
-    document.getElementById("todayCount").value = getDefaultCount(dayIdx);
+
+    // 預設為 8 遍
+    setTodayPreset(8);
 
     // 建立過去 7 天列表
     const batchList = document.getElementById("batchList");
