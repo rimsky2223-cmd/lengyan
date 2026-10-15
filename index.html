@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>楞嚴咒定課登記</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --accent: #d97706;
+      --accent-light: #fef3c7;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #059669;
+      --success-light: #ecfdf5;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      margin: 0;
+      padding: 20px 16px 40px;
+      display: flex;
+      justify-content: center;
+      line-height: 1.5;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 6px 0;
+    }
+    .header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 6px;
+      letter-spacing: 0.5px;
+    }
+    .header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* Card */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+    }
+
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .stat-box {
+      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 12px;
+      text-align: center;
+      position: relative;
+    }
+    .stat-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .stat-num {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--primary);
+      font-feature-settings: "tnum";
+    }
+    .stat-num.month {
+      color: var(--accent);
+    }
+    .stat-unit {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-left: 2px;
+    }
+
+    .refresh-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .refresh-btn:hover {
+      background: var(--primary-light);
+    }
+
+    /* Stepper & Counter UI */
+    .counter-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .date-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .date-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 6px;
+      margin-top: 2px;
+      width: fit-content;
+    }
+    .badge-weekday {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .badge-weekend {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .step-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text-main);
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: var(--shadow-sm);
+      transition: background 0.1s, transform 0.1s;
+    }
+    .step-btn:active {
+      transform: scale(0.92);
+      background: #f1f5f9;
+    }
+    .num-input {
+      width: 50px;
+      height: 32px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      background: #fff;
+    }
+    .num-input:focus {
+      outline: 2px solid var(--primary);
+      border-color: transparent;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      height: 44px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #ffffff;
+      background: var(--primary);
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .btn:hover {
+      background: var(--primary-hover);
+    }
+    .btn:active {
+      opacity: 0.85;
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .btn-batch {
+      background: var(--success);
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+    }
+    .btn-batch:hover {
+      background: #047857;
+    }
+
+    /* Batch Item */
+    .batch-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .batch-item:last-child {
+      border-bottom: none;
+      padding-bottom: 4px;
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(8px);
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s;
+      opacity: 0;
+      z-index: 99;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .sub-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: -6px 0 14px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1>楞嚴咒定課登記</h1>
+    <p>精進持誦 · 隨念即記 · 功不唐捐</p>
+  </div>
+
+  <!-- 統計看板 -->
+  <div class="card">
+    <div class="card-title-row">
+      <h2 class="card-title">📊 定課進度</h2>
+      <button class="refresh-btn" onclick="fetchStats()">
+        <span id="refreshIcon">🔄</span> 重新整理
+      </button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-label">目前總數</div>
+        <div class="stat-num" id="totalCountDisplay">--<span class="stat-unit">遍</span></div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label" id="monthLabel">當月累計</div>
+        <div class="stat-num month" id="monthCountDisplay">--<span class="stat-unit">遍</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 今日快速登記 -->
+  <div class="card">
+    <div class="card-title-row">
+      <h2 class="card-title">📝 今日登記</h2>
+    </div>
+    <div class="counter-wrapper">
+      <div class="date-info">
+        <span class="date-text" id="todayDate">----/--/--</span>
+        <span class="badge" id="todayBadge">週-</span>
+      </div>
+      <div class="stepper">
+        <button class="step-btn" onclick="stepChange('todayCount', -1)">−</button>
+        <input type="number" id="todayCount" class="num-input" min="0" value="8">
+        <button class="step-btn" onclick="stepChange('todayCount', 1)">+</button>
+      </div>
+    </div>
+    <button class="btn" id="btnToday" onclick="submitToday()">寫入今日記錄</button>
+  </div>
+
+  <!-- 過去 7 天批次補登 -->
+  <div class="card">
+    <div class="card-title-row">
+      <h2 class="card-title">📅 過去 7 天批次補登</h2>
+    </div>
+    <p class="sub-desc">已預設平日 8 遍、週末 1 遍。直接增減後一鍵送出。</p>
+    <div id="batchList"></div>
+    <div style="margin-top: 14px;">
+      <button class="btn btn-batch" id="btnBatch" onclick="submitBatch()">確認並全部送出</button>
+    </div>
+  </div>
+</div>
+
+<!-- 浮動提示 -->
+<div id="toast"></div>
+
+<script>
+  // 已直接整合您的 Google Apps Script 部署網址
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbz43B9DPbrAaL4Wu6tCRhm22pXs03DavkpOT9cs7_0VDhY35as587q7eAvZ8CaMhTdc/exec";
+
+  const DAY_NAMES = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"];
+
+  function getDefaultCount(dayIdx) {
+    return (dayIdx === 0 || dayIdx === 6) ? 1 : 8;
+  }
+
+  function formatDate(d) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function showToast(text, icon = "✅") {
+    const toast = document.getElementById("toast");
+    toast.innerHTML = `<span>${icon}</span> <span>${text}</span>`;
+    toast.classList.add("show");
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 2500);
+  }
+
+  function setButtonsDisabled(disabled) {
+    document.getElementById("btnToday").disabled = disabled;
+    document.getElementById("btnBatch").disabled = disabled;
+  }
+
+  function stepChange(targetId, delta) {
+    const input = document.getElementById(targetId);
+    if (!input) return;
+    let val = parseInt(input.value, 10) || 0;
+    val = Math.max(0, val + delta);
+    input.value = val;
+  }
+
+  // 抓取試算表統計
+  async function fetchStats() {
+    const totalEl = document.getElementById("totalCountDisplay");
+    const monthEl = document.getElementById("monthCountDisplay");
+    const refreshIcon = document.getElementById("refreshIcon");
+
+    totalEl.innerHTML = `<span style="font-size:20px;color:#94a3b8">...</span>`;
+    monthEl.innerHTML = `<span style="font-size:20px;color:#94a3b8">...</span>`;
+    if (refreshIcon) refreshIcon.style.transform = "rotate(180deg)";
+
+    try {
+      const res = await fetch(`${GAS_API_URL}?t=${Date.now()}`);
+      const data = await res.json();
+      if (data.status === "success") {
+        totalEl.innerHTML = `${data.totalCount}<span class="stat-unit">遍</span>`;
+        monthEl.innerHTML = `${data.monthCount}<span class="stat-unit">遍</span>`;
+        if (data.currentYearMonth) {
+          document.getElementById("monthLabel").textContent = `${data.currentYearMonth} 累計`;
+        }
+      }
+    } catch (err) {
+      totalEl.innerHTML = `0<span class="stat-unit">遍</span>`;
+      monthEl.innerHTML = `0<span class="stat-unit">遍</span>`;
+    } finally {
+      if (refreshIcon) refreshIcon.style.transform = "none";
+    }
+  }
+
+  // 初始化今日與過去 7 天
+  function init() {
+    const now = new Date();
+    const todayStr = formatDate(now);
+    const dayIdx = now.getDay();
+    const isWk = (dayIdx === 0 || dayIdx === 6);
+
+    document.getElementById("todayDate").textContent = todayStr;
+    const todayBadge = document.getElementById("todayBadge");
+    todayBadge.textContent = DAY_NAMES[dayIdx];
+    todayBadge.className = `badge ${isWk ? 'badge-weekend' : 'badge-weekday'}`;
+    document.getElementById("todayCount").value = getDefaultCount(dayIdx);
+
+    // 建立過去 7 天列表
+    const batchList = document.getElementById("batchList");
+    batchList.innerHTML = "";
+    for (let i = 1; i <= 7; i++) {
+      const past = new Date();
+      past.setDate(now.getDate() - i);
+      const pStr = formatDate(past);
+      const pDay = past.getDay();
+      const defaultCnt = getDefaultCount(pDay);
+      const pastIsWk = (pDay === 0 || pDay === 6);
+      const inputId = `batch_${i}`;
+
+      const row = document.createElement("div");
+      row.className = "batch-item";
+      row.innerHTML = `
+        <div class="date-info">
+          <span style="font-size: 14px; font-weight: 600;">${pStr}</span>
+          <span class="badge ${pastIsWk ? 'badge-weekend' : 'badge-weekday'}">${DAY_NAMES[pDay]}</span>
+        </div>
+        <div class="stepper">
+          <button class="step-btn" onclick="stepChange('${inputId}', -1)">−</button>
+          <input type="number" id="${inputId}" class="num-input batch-count" 
+                 data-date="${pStr}" data-day="${DAY_NAMES[pDay]}" value="${defaultCnt}" min="0">
+          <button class="step-btn" onclick="stepChange('${inputId}', 1)">+</button>
+        </div>
+      `;
+      batchList.appendChild(row);
+    }
+
+    // 載入即時統計
+    fetchStats();
+  }
+
+  // 寫入 Google 試算表
+  async function sendToGoogle(payload) {
+    setButtonsDisabled(true);
+    showToast("資料寫入中...", "⏳");
+
+    try {
+      await fetch(GAS_API_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify(payload)
+      });
+
+      showToast("已成功寫入試算表！", "✅");
+      setTimeout(fetchStats, 1500);
+    } catch (err) {
+      showToast("寫入失敗，請檢查網路", "❌");
+    } finally {
+      setButtonsDisabled(false);
+    }
+  }
+
+  async function submitToday() {
+    const now = new Date();
+    const payload = [{
+      date: formatDate(now),
+      dayOfWeek: DAY_NAMES[now.getDay()],
+      count: document.getElementById("todayCount").value
+    }];
+    await sendToGoogle(payload);
+  }
+
+  async function submitBatch() {
+    const inputs = document.querySelectorAll(".batch-count");
+    const payload = [];
+    inputs.forEach(input => {
+      payload.push({
+        date: input.getAttribute("data-date"),
+        dayOfWeek: input.getAttribute("data-day"),
+        count: input.value
+      });
+    });
+    await sendToGoogle(payload);
+  }
+
+  init();
+</script>
+
+</body>
+</html>
