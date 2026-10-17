@@ -302,7 +302,6 @@
       box-shadow: none;
     }
 
-    /* 活動紀錄清單 */
     .activity-list {
       display: flex;
       flex-direction: column;
@@ -447,10 +446,13 @@
     <button class="btn" id="btnToday" onclick="submitToday()">寫入今日記錄</button>
   </div>
 
-  <!-- 活動紀錄 -->
+  <!-- 活動紀錄（右側已加入重新整理按鈕） -->
   <div class="card">
     <div class="card-title-row">
       <h2 class="card-title">📋 活動紀錄（最近 10 筆）</h2>
+      <button class="refresh-btn" onclick="fetchStats()">
+        <span id="refreshIcon2">🔄</span> 重新整理
+      </button>
     </div>
     <p class="sub-desc">已登記之明細與時間，方便核對是否漏記或重複登記。</p>
     <div class="activity-list" id="activityList">
@@ -473,7 +475,6 @@
     return `${year}-${month}-${day}`;
   }
 
-  // 時間字串精簡化處理
   function formatCleanDate(str) {
     if (!str) return "";
     const d = new Date(str);
@@ -549,11 +550,13 @@
     const totalEl = document.getElementById("totalCountDisplay");
     const monthEl = document.getElementById("monthCountDisplay");
     const refreshIcon = document.getElementById("refreshIcon");
+    const refreshIcon2 = document.getElementById("refreshIcon2");
     const activityList = document.getElementById("activityList");
 
     totalEl.innerHTML = `<span style="font-size:20px;color:#94a3b8">...</span>`;
     monthEl.innerHTML = `<span style="font-size:20px;color:#94a3b8">...</span>`;
     if (refreshIcon) refreshIcon.style.transform = "rotate(180deg)";
+    if (refreshIcon2) refreshIcon2.style.transform = "rotate(180deg)";
 
     try {
       const res = await fetch(`${GAS_API_URL}?t=${Date.now()}`);
@@ -572,6 +575,7 @@
       activityList.innerHTML = `<div class="empty-state">尚無法取得歷史資料</div>`;
     } finally {
       if (refreshIcon) refreshIcon.style.transform = "none";
+      if (refreshIcon2) refreshIcon2.style.transform = "none";
     }
   }
 
@@ -586,7 +590,7 @@
       return;
     }
 
-    const todayRecords = records.filter(r => formatCleanDate(r.date) === todayStr);
+    const todayRecords = records.filter(r => formatCleanDate(r.date) === todayStr && r.dayOfWeek !== "前期結轉");
     if (todayRecords.length > 0) {
       const todayTotal = todayRecords.reduce((sum, r) => sum + Number(r.count), 0);
       todayStatus.className = "today-status warn";
@@ -598,6 +602,7 @@
     activityList.innerHTML = "";
     records.forEach(item => {
       const isWk = (item.dayOfWeek === "週日" || item.dayOfWeek === "週六");
+      const isCarry = (item.dayOfWeek === "前期結轉");
       const cleanDate = formatCleanDate(item.date);
       const cleanTime = formatCleanTime(item.time);
 
@@ -607,7 +612,7 @@
         <div class="activity-left">
           <div class="activity-title">
             <span>${cleanDate}</span>
-            <span class="badge ${isWk ? 'badge-weekend' : 'badge-weekday'}">${item.dayOfWeek || ""}</span>
+            <span class="badge ${isCarry ? 'badge-weekday' : (isWk ? 'badge-weekend' : 'badge-weekday')}">${item.dayOfWeek || ""}</span>
           </div>
           <div class="activity-time">
             <span>🕒 ${cleanTime}</span>
